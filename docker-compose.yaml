@@ -114,9 +114,7 @@ services:
   paperless-ai:
     image: clusterzx/paperless-ai:latest
     container_name: paperless-ai
-    restart: no
-    # restart: unless-stopped
-    condition: service_started
+    restart: no # restart: unless-stopped
     ports:
       - "3000:3000"
     networks:
