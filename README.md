@@ -80,7 +80,7 @@ make up-ai
 | File                | Required | Purpose                                |
 |---------------------|----------|----------------------------------------|
 | `.env`              | Yes      | Tokens, URLs, Model settings           |
-| `.paperless-ai.env` | Optional | AI-specific overrides (MAX_CONCURRENT) |
+| `.paperless-ai.env` | Yes      | AI-specific overrides (MAX_CONCURRENT) |
 
 ## Persistent Volumes
 
