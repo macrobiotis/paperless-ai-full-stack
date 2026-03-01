@@ -1,58 +1,54 @@
-# paperless-ai-full-stack
+# Paperless-AI Full Stack
 
-## Install
+[![Docker](https://img.shields.io/badge/Docker-Compose-blue.svg)](https://docs.docker.com/compose/)
+[![Self-Hosted](https://img.shields.io/badge/Self--Hosted-green.svg)](https://github.com/macrobiotis/paperless-ai-full-stack)
+
+Automated document management with AI tagging, OCR and local LLMs (Ollama).
+
+## Features
+
+- **Paperless-ngx**: Core DMS with OCR/search
+- **Paperless-AI**: AI auto-tagging, summarization (Ollama/OpenAI)
+- **GPU Support**: CUDA/ROCm auto-detection
+- **Local-First**: 100% self-hosted, no cloud
+
+## Prerequisites
+
+- Docker & Docker Compose
+- 4GB+ RAM (8GB recommended for LLMs)
+- GPU optional (CPU fallback)
+
+## Installation
 
 ```bash
 git clone git@github.com:macrobiotis/paperless-ai-full-stack.git
 cd paperless-ai-full-stack
 ```
 
-***
+## Quick-Start
 
-## Creates
-
-### Docker-Containers
-
-| Service            | Port  | URL             |
-|--------------------|-------|--------------------------|
-| ollama             | 11434 | <http://localhost:11434>  |
-| redis              | 6379  |   |
-| paperless-db       | 5432  |                           |
-| paperless-webserver| 8000  | <http://localhost:8000>   |
-| paperless-ai       | 3000  | <http://localhost:3000>   |
-
-***
-
-### Files
-
-| File                |                                 |
-|----------------------|---------------------------------|
-| `.env`              | Edit this file for token-update |
-| `.paperless-ai.env` | Edit this optional             |
-
-***
-
-### Folders
-
-| Path                  |                   |
-|-------------------------|-------------------------------|
-| `./volumes/consume`    | Add your files here          |
-| `./volumes/export`     |                               |
-| `./volumes/media`      |                               |
-
-***
-
-## Run
-
-### 1. Start paperless-webserver
+### 1. Initial Setup
 
 ```bash
 make up
 ```
 
-### 2. Get API-Token from [http://localhost:8000](http://localhost:8000) → Profile → API Tokens → Create new API Token → Copy the token
+Wait ~2min for PostgreSQL/Redis/Paperless to initialize.
 
-### 3. Add to `.env` as `PAPERLESS_API_TOKEN`
+### 2. Get API Token
+
+- Open [http://localhost:8000](http://localhost:8000)
+- Admin → Profile → API Tokens → Create new API Token
+- Copy the token
+
+### 3. Configure Environment
+
+Edit .env:
+
+```text
+PAPERLESS_API_TOKEN=p-abc123yourtokenhere
+OLLAMA_MODEL=llama3.2:1b  # or qwen2.5:3b, phi3:mini
+```
 
 ### 4. Start paperless-ai
 
@@ -60,30 +56,65 @@ make up
 make up-ai
 ```
 
-### 5. Login to paperless-ai at <http://localhost:3000>
+### 5. Access Dashboard
 
-***
+| Interface          | URL                      |
+|--------------------|--------------------------|
+| Paperless          | <http://localhost:3000>  |
+| Paperless-Ai       | <http://localhost:3000>  |
 
-## Logs
+## Docker-Containers
 
-- make logs
-- make logs-paperless <- paperless-webserver logs.
-- make logs-ai <- paperless-ai logs.
-- make logs-redis <- redis logs.
-- make logs-ollama <- ollama logs.
+| Service            | Port  | Purpose                  |
+|--------------------|-------|--------------------------|
+| ollama             | 11434 | Local LLM (GPU/CPU)      |
+| redis              | 6379  | Session/Cache            |
+| paperless-db       | 5432  | PostgreSQL Database      |
+| paperless-webserver| 8000  | Main Web UI              |
+| paperless-ai       | 3000  | AI Processing Dashboard  |
 
-## Source
+## Configuration-Files
 
-- <https://github.com/macrobiotis/paperless-ai>
-- <https://github.com/paperless-ngx/paperless-ngx>
+| File                | Required | Purpose                                |
+|---------------------|----------|----------------------------------------|
+| `.env`              | Yes      | Tokens, URLs, Model settings           |
+| `.paperless-ai.env` | Optional | AI-specific overrides (MAX_CONCURRENT) |
 
-Thanks.
+## Persistent Volumes
 
-***
+| Path                  | Usage                               |
+|-------------------------|-----------------------------------|
+| `./volumes/consume`    | 📥 Drop PDFs here (auto-process)   |
+| `./volumes/export`     | Generated reports/exports          |
+| `./volumes/media`      |  Thumbnails + processed files      |
 
-## Example
+## Makefile Commands
 
-### paperless-ai German Language Prompt
+### Status & Info
+
+make status           # Container overview
+make gpu-detect       # GPU/CPU detection
+
+### Ollama Management
+
+make ollama-pull      # Download model
+make ollama-list      # List available models
+make ollama-test      # API test
+
+### Lifecycle
+
+make up               # Full stack (core)
+make up-ai            # Add AI (after token)
+make down             # Graceful stop
+make clean            # Stop + delete volumes ⚠️
+
+### Logs
+
+make logs             # All services
+make logs-ai          # Paperless-AI only
+make logs-paperless   # Paperless core
+
+## Example AI Prompt (Legal Docs)
 
 ```m̀arkdown
 Du bist präziser Assistent. **STRICT: Nur Kontext-Fakten, KEINE Ergänzungen/Halluzinationen!**
