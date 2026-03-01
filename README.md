@@ -3,7 +3,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue.svg)](https://docs.docker.com/compose/)
 [![Self-Hosted](https://img.shields.io/badge/Self--Hosted-green.svg)](https://github.com/macrobiotis/paperless-ai-full-stack)
 
-Automated document management with AI tagging, OCR and local LLMs (Ollama).
+Automated document management with AI tagging, OCR and local LLMs (Ollama with llama3.2 and qwen2.5).
 
 ## Features
 
@@ -49,7 +49,7 @@ Edit .env:
 
 ```text
 PAPERLESS_API_TOKEN=p-abc123yourtokenhere
-OLLAMA_MODEL=llama3.2:1b  # or qwen2.5:3b, phi3:mini
+OLLAMA_MODEL=llama3.2:1b  # or qwen2.5:3b
 ```
 
 ### 4. Start paperless-ai
