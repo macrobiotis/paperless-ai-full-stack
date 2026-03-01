@@ -1,5 +1,6 @@
 .env
 *.bak
 .paperless-ai.env
+ai.modelfile
 paperless-ai-full-stack.code-workspace
 volumes/*

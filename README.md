@@ -58,6 +58,8 @@ OLLAMA_MODEL=llama3.2:1b  # or qwen2.5:3b
 make up-ai
 ```
 
+Optional: Change restart to 'unless-stopped' in docker-compose.yaml
+
 ### 5. Access Dashboard
 
 | Interface          | URL                      |

@@ -116,6 +116,7 @@ services:
     container_name: paperless-ai
     restart: no
     # restart: unless-stopped
+    condition: service_started
     ports:
       - "3000:3000"
     networks:
@@ -144,7 +145,7 @@ services:
       - ./.paperless-ai.env:/app/data/.env:rw
       - ./setup-paperless-ai.sh:/setup-paperless-ai.sh:ro
       - paperless_ai_data:/app/data
-    entrypoint: [ "./start-services.sh" ]
+    entrypoint: [ "/usr/bin/bash", "./start-services.sh" ]
     depends_on:
       - paperless-webserver
       - ollama
