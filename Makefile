@@ -30,15 +30,15 @@ PAPERLESS_DBNAME=paperless
 PAPERLESS_DBUSER=paperless
 PAPERLESS_DBPASS=paperless123
 
-# Paperless-ngx URLs (für Bridge-Netzwerk)
+# Paperless-ngx URLs
 PAPERLESS_URL=http://paperless-webserver:8000
 PAPERLESS_REDIS=redis://paperless-redis:6379
 
-# paperless-ai API (Token aus Paperless UI: Settings > API Tokens generieren!)
+# paperless-ai API (Token from Paperless UI: Settings > API Tokens generate/yes!)
 PAPERLESS_API_TOKEN=change_me_super_secret_token_here
 PAPERLESS_USERNAME=admin
 
-# Ollama (intern, Bridge-Netzwerk)
+# Ollama (intern, Bridge-Network)
 OLLAMA_URL=http://ollama:11434
 OLLAMA_MODEL=llama3.2:1b  # Alternativen: qwen2.5:3b, phi3:mini, gemma2:2b
 
@@ -48,7 +48,7 @@ MAX_CONCURRENT=2
 OLLAMA_NUM_CTX=8192
 MAX_TOKENS=2048
 
-# Paperless-ngx Netzwerk/CSRF (Bridge-kompatibel)
+# Paperless-ngx Network/CSRF (Bridge-compatible)
 PAPERLESS_CSRF_TRUSTED_ORIGINS=http://paperless-webserver:8000,http://127.0.0.1:8000
 PAPERLESS_ALLOWED_HOSTS=paperless-webserver,127.0.0.1,localhost
 
@@ -63,7 +63,7 @@ EOF
 endif
 
 include .env
-export  # Export für Docker Compose
+export  # Export for Docker Compose
 
 # GPU Detection (rocm/cuda/fallback)
 ifeq ($(shell test -e /dev/kfd && echo rocm),rocm)

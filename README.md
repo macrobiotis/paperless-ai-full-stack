@@ -16,7 +16,9 @@ Automated document management with AI tagging, OCR and local LLMs (Ollama).
 
 - Docker & Docker Compose
 - 4GB+ RAM (8GB recommended for LLMs)
-- GPU optional (CPU fallback)
+- GPU (cuda/rocm) optional (CPU fallback)
+
+Run `./install-docker.sh`
 
 ## Installation
 
@@ -92,29 +94,37 @@ make up-ai
 
 ### Status & Info
 
+```bash
 make status           # Container overview
 make gpu-detect       # GPU/CPU detection
+```
 
 ### Ollama Management
 
+```bash
 make ollama-pull      # Download model
 make ollama-list      # List available models
 make ollama-test      # API test
+```
 
 ### Lifecycle
 
+```bash
 make up               # Full stack (core)
 make up-ai            # Add AI (after token)
 make down             # Graceful stop
 make clean            # Stop + delete volumes ⚠️
+```
 
 ### Logs
 
+```bash
 make logs             # All services
 make logs-ai          # Paperless-AI only
 make logs-paperless   # Paperless core
+```
 
-## Example AI Prompt (Legal Docs)
+## Example AI Prompt (German Legal Docs)
 
 ```m̀arkdown
 Du bist präziser Assistent. **STRICT: Nur Kontext-Fakten, KEINE Ergänzungen/Halluzinationen!**
