@@ -1,0 +1,164 @@
+services:
+  paperless-db:
+    image: postgres:16
+    container_name: paperless-db
+    restart: unless-stopped
+    networks:
+      - paperless_net
+    environment:
+      - POSTGRES_DB=${PAPERLESS_DBNAME:-paperless}
+      - POSTGRES_USER=${PAPERLESS_DBUSER:-paperless}
+      - POSTGRES_PASSWORD=${PAPERLESS_DBPASS:-paperless123}
+    volumes:
+      - paperless_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  paperless-redis:
+    image: redis:7-alpine
+    container_name: paperless-redis
+    restart: unless-stopped
+    networks:
+      - paperless_net
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - paperless_redisdata:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  paperless-webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless-webserver
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    networks:
+      - paperless_net
+    ipc: host
+    cpus: "4.0"
+    cpu_shares: 256
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    environment:
+      - PAPERLESS_REDIS=redis://paperless-redis:6379
+      - PAPERLESS_DBHOST=paperless-db
+      - PAPERLESS_DBNAME=${PAPERLESS_DBNAME}
+      - PAPERLESS_DBUSER=${PAPERLESS_DBUSER}
+      - PAPERLESS_DBPASS=${PAPERLESS_DBPASS}
+      - PAPERLESS_TIME_ZONE=Europe/Berlin
+      - PAPERLESS_OCR_LANGUAGE=deu+eng
+      - PAPERLESS_URL=http://paperless-webserver:8000
+      - PAPERLESS_CSRF_TRUSTED_ORIGINS=http://paperless-webserver:8000,http://127.0.0.1:8000
+      - PAPERLESS_ALLOWED_HOSTS=paperless-webserver,127.0.0.1,localhost
+      - AUTO_MODE=true
+      - USERMAP_UID=1000
+      - USERMAP_GID=1000
+    volumes:
+      - ./.env:/usr/local/paperless/.env:ro
+      - ./volumes/media:/usr/src/paperless/media
+      - ./volumes/consume:/usr/src/paperless/consume
+      - ./volumes/export:/usr/src/paperless/export
+      - paperless_data:/usr/src/paperless/data
+    depends_on:
+      paperless-db:
+        condition: service_healthy
+      paperless-redis:
+        condition: service_healthy
+
+  ollama:
+    image: ollama/ollama:rocm
+    container_name: ollama
+    restart: unless-stopped
+    networks:
+      - paperless_net
+    ports:
+      - "11434:11434"
+    ipc: host
+    cpus: "8.0"
+    cpu_shares: 512
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    environment:
+      - HSA_OVERRIDE_GFX_VERSION=11.0.0
+      - HSA_ENABLE_SDMA=1
+      - ROCR_VISIBLE_DEVICES=0
+      - HIP_VISIBLE_DEVICES=0
+    volumes:
+      - ../.env:/root/.env:ro
+      - ./setup-ollama.sh:/setup-ollama.sh:ro
+      - ollama_data:/root/.ollama
+    entrypoint: [ "/bin/bash", "/setup-ollama.sh" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "kill -0 1 || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+  paperless-ai:
+    image: clusterzx/paperless-ai:latest
+    container_name: paperless-ai
+    restart: no
+    # restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      - paperless_net
+    cpus: "4.0"
+    cpu_shares: 256
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    environment:
+      - PAPERLESS_AI_PORT=3000
+      - PAPERLESS_URL=${PAPERLESS_URL}
+      - PAPERLESS_API_TOKEN=${PAPERLESS_API_TOKEN}
+      - PAPERLESS_USERNAME=${PAPERLESS_USERNAME}
+      - OLLAMA_URL=http://ollama:11434
+      - AI_PROVIDER=ollama
+      - OLLAMA_MODEL=llama3.2
+      - MAX_CONCURRENT=2
+      - OLLAMA_NUM_CTX=8192
+      - MAX_TOKENS=2048
+    volumes:
+      - ./.paperless-ai.env:/app/data/.env:rw
+      - ./setup-paperless-ai.sh:/setup-paperless-ai.sh:ro
+      - paperless_ai_data:/app/data
+    entrypoint: [ "./start-services.sh" ]
+    depends_on:
+      - paperless-webserver
+      - ollama
+
+networks:
+  paperless_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  ollama_data:
+  paperless_data:
+  paperless_pgdata:
+  paperless_redisdata:
+  paperless_ai_data:

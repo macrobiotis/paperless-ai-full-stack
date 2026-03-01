@@ -1,0 +1,5 @@
+.env
+*.bak
+.paperless-ai.env
+paperless-ai-full-stack.code-workspace
+volumes/*
