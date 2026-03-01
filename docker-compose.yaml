@@ -77,7 +77,7 @@ services:
         condition: service_healthy
 
   ollama:
-    image: ollama/ollama:rocm
+    image: ollama/ollama:latest
     container_name: ollama
     restart: unless-stopped
     networks:
