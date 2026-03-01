@@ -12,7 +12,7 @@ ifeq ($(wildcard .paperless-ai.env),)
 # OLLAMA_URL=http://ollama:11434
 # AI_PROVIDER=ollama
 # MAX_CONCURRENT=2
-	EOF
+EOF
 	@echo "✅ .paperless-ai.env created! Edit if needed."
 endif
 
@@ -30,15 +30,15 @@ PAPERLESS_DBNAME=paperless
 PAPERLESS_DBUSER=paperless
 PAPERLESS_DBPASS=paperless123
 
-# Paperless-ngx URLs
+# Paperless-ngx URLs (für Bridge-Netzwerk)
 PAPERLESS_URL=http://paperless-webserver:8000
 PAPERLESS_REDIS=redis://paperless-redis:6379
 
-# paperless-ai API (Token from Paperless UI: Settings > API Tokens generate/yes!)
+# paperless-ai API (Token aus Paperless UI: Settings > API Tokens generieren!)
 PAPERLESS_API_TOKEN=change_me_super_secret_token_here
 PAPERLESS_USERNAME=admin
 
-# Ollama (intern, Bridge-Network)
+# Ollama (intern, Bridge-Netzwerk)
 OLLAMA_URL=http://ollama:11434
 OLLAMA_MODEL=llama3.2:1b  # Alternativen: qwen2.5:3b, phi3:mini, gemma2:2b
 
@@ -48,22 +48,22 @@ MAX_CONCURRENT=2
 OLLAMA_NUM_CTX=8192
 MAX_TOKENS=2048
 
-# Paperless-ngx Network/CSRF (Bridge-compatible)
+# Paperless-ngx Netzwerk/CSRF (Bridge-kompatibel)
 PAPERLESS_CSRF_TRUSTED_ORIGINS=http://paperless-webserver:8000,http://127.0.0.1:8000
 PAPERLESS_ALLOWED_HOSTS=paperless-webserver,127.0.0.1,localhost
 
 # Optional: Debug/Logs
 PAPERLESS_LOG_LEVEL=info
 PAPERLESS_TIME_ZONE=Europe/Berlin
-	EOF
+EOF
 	@echo "✅ .env erstellt! 🔧 Editiere PAPERLESS_API_TOKEN & OLLAMA_MODEL:"
 	@echo "   → Paperless UI: Settings → API Tokens → Copy Token"
 	@echo "   → make up (nach Edit)"
 	@exit 1  # Stoppe bis konfiguriert
 endif
 
--include .paperless-ai.env
--include .env
+include .env
+export  # Export für Docker Compose
 
 # GPU Detection (rocm/cuda/fallback)
 ifeq ($(shell test -e /dev/kfd && echo rocm),rocm)
