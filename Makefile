@@ -12,7 +12,7 @@ ifeq ($(wildcard .paperless-ai.env),)
 # OLLAMA_URL=http://ollama:11434
 # AI_PROVIDER=ollama
 # MAX_CONCURRENT=2
-EOF
+	EOF
 	@echo "✅ .paperless-ai.env created! Edit if needed."
 endif
 
@@ -55,15 +55,15 @@ PAPERLESS_ALLOWED_HOSTS=paperless-webserver,127.0.0.1,localhost
 # Optional: Debug/Logs
 PAPERLESS_LOG_LEVEL=info
 PAPERLESS_TIME_ZONE=Europe/Berlin
-EOF
+	EOF
 	@echo "✅ .env erstellt! 🔧 Editiere PAPERLESS_API_TOKEN & OLLAMA_MODEL:"
 	@echo "   → Paperless UI: Settings → API Tokens → Copy Token"
 	@echo "   → make up (nach Edit)"
 	@exit 1  # Stoppe bis konfiguriert
 endif
 
-include .env
-export  # Export for Docker Compose
+-include .paperless-ai.env
+-include .env
 
 # GPU Detection (rocm/cuda/fallback)
 ifeq ($(shell test -e /dev/kfd && echo rocm),rocm)
