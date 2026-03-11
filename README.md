@@ -64,8 +64,8 @@ Optional: Change restart to 'unless-stopped' in docker-compose.yaml
 
 | Interface          | URL                      |
 |--------------------|--------------------------|
-| Paperless          | <http://localhost:3000>  |
-| Paperless-Ai       | <http://localhost:9000>  |
+| Paperless          | <http://localhost:8000>  |
+| Paperless-Ai       | <http://localhost:3000>  |
 
 ## Docker-Containers
 
