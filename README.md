@@ -9,6 +9,7 @@ Automated document management with AI tagging, OCR and local LLMs (Ollama with l
 
 - **Paperless-ngx**: Core DMS with OCR/search
 - **Paperless-AI**: AI auto-tagging, summarization (Ollama/OpenAI)
+- **Open Web-Ui**: Chat with Ollama
 - **GPU Support**: CUDA/ROCm auto-detection
 - **Local-First**: 100% self-hosted, no cloud
 
@@ -66,6 +67,7 @@ Optional: Change restart to 'unless-stopped' in docker-compose.yaml
 |--------------------|--------------------------|
 | Paperless          | <http://localhost:8000>  |
 | Paperless-Ai       | <http://localhost:3000>  |
+| Open Web-Ui        | <http://localhost:8080>  |
 
 ## Docker-Containers
 
@@ -76,6 +78,7 @@ Optional: Change restart to 'unless-stopped' in docker-compose.yaml
 | paperless-db       | 5432  | PostgreSQL Database      |
 | paperless-webserver| 8000  | Main Web UI              |
 | paperless-ai       | 3000  | AI Processing Dashboard  |
+| open-webui         | 8080  | Chat Client              |
 
 ## Configuration-Files
 
@@ -91,6 +94,7 @@ Optional: Change restart to 'unless-stopped' in docker-compose.yaml
 | `./volumes/consume`    | 📥 Drop PDFs here (auto-process)   |
 | `./volumes/export`     | Generated reports/exports          |
 | `./volumes/media`      |  Thumbnails + processed files      |
+| `./volumes/images`     |  generated ollama Images           |
 
 ## Makefile Commands
 

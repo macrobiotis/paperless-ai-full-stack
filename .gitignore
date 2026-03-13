@@ -1,7 +1,9 @@
 .env
-*.bak
+.info.md
 .paperless-ai.env
+*.bak
 ai.modelfile
+fix.sh
+images/*
 paperless-ai-full-stack.code-workspace
 volumes/*
-fix.sh

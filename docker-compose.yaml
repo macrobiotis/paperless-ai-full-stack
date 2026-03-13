@@ -77,7 +77,7 @@ services:
         condition: service_healthy
 
   ollama:
-    image: ollama/ollama:latest
+    image: ollama/ollama:rocm
     container_name: ollama
     restart: unless-stopped
     networks:
@@ -101,6 +101,7 @@ services:
       - HIP_VISIBLE_DEVICES=0
     volumes:
       - ../.env:/root/.env:ro
+      - ./volumes/images:/root/images
       - ./setup-ollama.sh:/setup-ollama.sh:ro
       - ollama_data:/root/.ollama
     entrypoint: [ "/bin/bash", "/setup-ollama.sh" ]
@@ -110,6 +111,24 @@ services:
       timeout: 10s
       retries: 3
       start_period: 120s
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    volumes:
+      - open-webui_data:/app/backend/data
+    ports:
+      - 8080:8080
+    networks:
+      - paperless_net
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=OJhQj0gOUbzCCriw
+    depends_on:
+      - ollama
+    # extra_hosts:
+    #   - host.docker.internal:host-gateway
+    restart: unless-stopped
 
   paperless-ai:
     image: clusterzx/paperless-ai:latest
@@ -157,6 +176,7 @@ networks:
 
 volumes:
   ollama_data:
+  open-webui_data:
   paperless_data:
   paperless_pgdata:
   paperless_redisdata:
