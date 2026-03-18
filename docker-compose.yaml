@@ -99,6 +99,7 @@ services:
       - HSA_ENABLE_SDMA=1
       - ROCR_VISIBLE_DEVICES=0
       - HIP_VISIBLE_DEVICES=0
+      - OLLAMA_ORIGINS=moz-extension://*,http://a5.local:11434
     volumes:
       - ../.env:/root/.env:ro
       - ./volumes/images:/root/images
@@ -126,8 +127,6 @@ services:
       - WEBUI_SECRET_KEY=OJhQj0gOUbzCCriw
     depends_on:
       - ollama
-    # extra_hosts:
-    #   - host.docker.internal:host-gateway
     restart: unless-stopped
 
   paperless-ai:
