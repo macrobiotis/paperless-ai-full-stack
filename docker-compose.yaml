@@ -99,6 +99,11 @@ services:
       - HSA_ENABLE_SDMA=1
       - ROCR_VISIBLE_DEVICES=0
       - HIP_VISIBLE_DEVICES=0
+      - ENABLE_RAG_EMBEDDINGS=true
+      - EMBEDDING_MODEL=nomic-embed-text
+      # - OLLAMA_CONTEXT_LENGTH=16384 # Default für alle Modelle
+      # - OLLAMA_CONTEXT_LENGTH=32768 # Default für alle Modelle
+      # - OLLAMA_NUM_CTX=32768
       - OLLAMA_ORIGINS=moz-extension://*,http://a5.local:11434,http://a9.local:11434
     volumes:
       - ../.env:/root/.env:ro
